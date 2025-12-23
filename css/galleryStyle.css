@@ -1,0 +1,71 @@
+*{
+  box-sizing: border-box;
+}
+
+img{
+  width: 250px; 
+}
+body{
+  background-color: rgb(13, 37, 47);
+  color: goldenrod; 
+  align-content: center;
+  text-align: center;
+  border: 14px solid rgb(202, 94, 6);
+}
+
+$w: 20vmin; // card width
+$s: .1*$w; // how much space between cards
+
+html, body, div { display: grid }
+
+html { min-height: 100% }
+
+/* scene takes as much space as possible, 
+ * controls at the bottom only as much as they need */
+body { grid-template-rows: 1fr max-content }
+
+/* so 3D transformed children of 3D transformed parents 
+ * don't get flattened in their parents' planes */
+div { transform-style: preserve-3d }
+
+.scene { perspective: 35em }
+
+.a3d {
+	/* computing these custom properties as per 
+	 * https://www.youtube.com/watch?v=QEuRuECyyrA#t=5m36s */
+	/* base angle corresponding to one of the n cards */
+	--ba: calc(1turn/var(--n));
+	/* inradius of polygon of edge length $w + 2 lateral $s */
+	--r: calc((.5*#{$w} + #{$s})/tan(.5*var(--ba)));
+	
+	/* put assembly in the middle of the one scene grid cell */
+	place-self: center;
+	/* perfect use for individual transform properties */
+	translate: 0 0 calc(-1*var(--r));
+	/* carousel rotation part: */
+	rotate: y calc(-1*var(--k)*var(--ba));
+	transition: rotate .5s
+}
+
+.card {
+	grid-area: 1/ 1; /* stack all card elements */
+	width: $w; /* card size */
+	aspect-ratio: 1;
+	/* position cards on the lateral faces of a prism */
+	/* see https://www.youtube.com/watch?v=ERz89m8K-G0 */
+	transform: 
+		rotatey(calc(var(--i)*var(--ba))) 
+		translatez(var(--r));
+	/* just to make card easily distinguishable */
+	box-shadow: inset 0 0 0 8px;
+	background: gold;
+}
+
+/* basic button styles */
+.ctr {
+	display: flex;
+	gap: 1em;
+	justify-content: center
+}
+
+button { font-size: 2em }
